@@ -13,7 +13,7 @@ const requisitosCultivos = {
     naranjas: { luminosidad: "8-10 horas", precipitacion: "600-800 mm", humedad: "50-60%", temperatura: "25-30°C" },
 };
 
-let chart; // Variable global para almacenar el gráfico
+let chart; // Variable global para manejar el gráfico
 
 function analizarCultivo() {
     const cultivo = document.getElementById("cultivo").value;
@@ -22,7 +22,6 @@ function analizarCultivo() {
     // Obtener requisitos del cultivo seleccionado
     const requisitos = requisitosCultivos[cultivo];
 
-    // Crear contenido amigable para agricultores
     resultadosDiv.innerHTML = `
         <h3>Requisitos para cultivar ${cultivo.charAt(0).toUpperCase() + cultivo.slice(1)}:</h3>
         <ul>
@@ -34,31 +33,30 @@ function analizarCultivo() {
         <p>¡Verifica si las condiciones de tu suelo son adecuadas!</p>
     `;
 
-    // Mostrar el gráfico
     mostrarGrafico(requisitos);
 }
 
 function mostrarGrafico(requisitos) {
-    const canvas = document.getElementById('graficoCondiciones');
+    const container = document.getElementById('graficoContainer');
 
-    // Limpiar el canvas eliminando el nodo anterior y creando uno nuevo
-    canvas.parentNode.removeChild(canvas);
-    
-    // Crear un nuevo canvas para evitar acumulación de gráficos
+    // Eliminar el canvas anterior si existe
+    const oldCanvas = document.getElementById('graficoCondiciones');
+    if (oldCanvas) {
+        oldCanvas.remove();
+    }
+
+    // Crear un nuevo canvas
     const nuevoCanvas = document.createElement('canvas');
     nuevoCanvas.id = 'graficoCondiciones';
-    nuevoCanvas.width = 400;
-    nuevoCanvas.height = 400;
-    document.getElementById('graficoContainer').appendChild(nuevoCanvas);
+    container.appendChild(nuevoCanvas);
 
     const ctx = nuevoCanvas.getContext('2d');
 
-    // Si ya hay un gráfico, destruirlo antes de crear uno nuevo
+    // Destruir gráfico anterior si existe
     if (chart) {
         chart.destroy();
     }
 
-    // Crear un nuevo gráfico
     chart = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -75,22 +73,10 @@ function mostrarGrafico(requisitos) {
                     backgroundColor: 'rgba(76, 175, 80, 0.5)',
                     borderColor: 'rgba(76, 175, 80, 1)',
                     borderWidth: 1
-                },
-                {
-                    label: 'Condiciones actuales',
-                    data: [10, 700, 65, 22], // Simulación de datos
-                    backgroundColor: 'rgba(255, 99, 132, 0.5)',
-                    borderColor: 'rgba(255, 99, 132, 1)',
-                    borderWidth: 1
                 }
             ]
         },
         options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            },
             responsive: true,
             maintainAspectRatio: false
         }
@@ -98,24 +84,5 @@ function mostrarGrafico(requisitos) {
 }
 
 function monitorearCultivo() {
-    const monitoreoResultadosDiv = document.getElementById("monitoreoResultados");
-
-    // Simular condiciones actuales (esto debería ser reemplazado con datos reales)
-    const condicionesActuales = {
-        luminosidad: "9 horas",
-        precipitacion: "650 mm",
-        humedad: "62%",
-        temperatura: "21°C"
-    };
-
-    monitoreoResultadosDiv.innerHTML = `
-        <h3>Condiciones actuales del cultivo:</h3>
-        <ul>
-            <li><strong>Luminosidad:</strong> ${condicionesActuales.luminosidad}</li>
-            <li><strong>Precipitación:</strong> ${condicionesActuales.precipitacion}</li>
-            <li><strong>Humedad:</strong> ${condicionesActuales.humedad}</li>
-            <li><strong>Temperatura:</strong> ${condicionesActuales.temperatura}</li>
-        </ul>
-        <p>Verifica si las condiciones siguen siendo favorables para tu cultivo.</p>
-    `;
+    document.getElementById("monitoreoResultados").innerHTML = "<p>Monitoreo en proceso...</p>";
 }
