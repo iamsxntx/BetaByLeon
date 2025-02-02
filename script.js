@@ -13,14 +13,14 @@ const requisitosCultivos = {
     naranjas: { luminosidad: "8-10 horas", precipitacion: "600-800 mm", humedad: "50-60%", temperatura: "25-30°C" },
 };
 
+let chart; 
+
 function analizarCultivo() {
     const cultivo = document.getElementById("cultivo").value;
     const resultadosDiv = document.getElementById("resultados");
 
-    // Obtener requisitos del cultivo seleccionado
     const requisitos = requisitosCultivos[cultivo];
 
-    // Crear contenido amigable para agricultores
     resultadosDiv.innerHTML = `
         <h3>Requisitos para cultivar ${cultivo.charAt(0).toUpperCase() + cultivo.slice(1)}:</h3>
         <ul>
@@ -32,40 +32,41 @@ function analizarCultivo() {
         <p>¡Verifica si las condiciones de tu suelo son adecuadas!</p>
     `;
 
-    // Aquí puedes añadir la lógica para mostrar condiciones actuales y gráficos
     mostrarGrafico(requisitos);
 }
 
 function mostrarGrafico(requisitos) {
     const ctx = document.getElementById('graficoCondiciones').getContext('2d');
-    const chart = new Chart(ctx, {
+
+    if (chart) {
+        chart.destroy();
+    }
+
+    chart = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: ['Luminosidad', 'Precipitación', 'Humedad', 'Temperatura'],
-            datasets: [{
-                label: 'Requisitos óptimos',
-                data: [
-                    parseFloat(requisitos.luminosidad.split('-')[0]), // Convertir rango a valor
-                    parseFloat(requisitos.precipitacion.split('-')[0]),
-                    parseFloat(requisitos.humedad.split('-')[0]),
-                    parseFloat(requisitos.temperatura.split('-')[0])
-                ],
-                backgroundColor: 'rgba(76, 175, 80, 0.5)',
-                borderColor: 'rgba(76, 175, 80, 1)',
-                borderWidth: 1
-            },
-            {
-                label: 'Condiciones actuales', // Simulación de condiciones actuales
-                data: [
-                    10, // Simulación de luminosidad (valor de ejemplo)
-                    700, // Simulación de precipitación (valor de ejemplo)
-                    65, // Simulación de humedad (valor de ejemplo)
-                    22 // Simulación de temperatura (valor de ejemplo)
-                ],
-                backgroundColor: 'rgba(255, 99, 132, 0.5)',
-                borderColor: 'rgba(255, 99, 132, 1)',
-                borderWidth: 1
-            }]
+            datasets: [
+                {
+                    label: 'Requisitos óptimos',
+                    data: [
+                        parseFloat(requisitos.luminosidad.split('-')[0]),
+                        parseFloat(requisitos.precipitacion.split('-')[0]),
+                        parseFloat(requisitos.humedad.split('-')[0]),
+                        parseFloat(requisitos.temperatura.split('-')[0])
+                    ],
+                    backgroundColor: 'rgba(76, 175, 80, 0.5)',
+                    borderColor: 'rgba(76, 175, 80, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Condiciones actuales',
+                    data: [10, 700, 65, 22], // Simulación de datos
+                    backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }
+            ]
         },
         options: {
             scales: {
@@ -82,7 +83,6 @@ function mostrarGrafico(requisitos) {
 function monitorearCultivo() {
     const monitoreoResultadosDiv = document.getElementById("monitoreoResultados");
 
-    // Simular condiciones actuales (esto debería ser reemplazado con datos reales)
     const condicionesActuales = {
         luminosidad: "9 horas",
         precipitacion: "650 mm",
@@ -101,4 +101,3 @@ function monitorearCultivo() {
         <p>Verifica si las condiciones siguen siendo favorables para tu cultivo.</p>
     `;
 }
-
