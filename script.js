@@ -13,13 +13,12 @@ const requisitosCultivos = {
     naranjas: { luminosidad: "8-10 horas", precipitacion: "600-800 mm", humedad: "50-60%", temperatura: "25-30°C" },
 };
 
-let chart; // Variable global para manejar el gráfico
+let chart;
 
 function analizarCultivo() {
     const cultivo = document.getElementById("cultivo").value;
     const resultadosDiv = document.getElementById("resultados");
 
-    // Obtener requisitos del cultivo seleccionado
     const requisitos = requisitosCultivos[cultivo];
 
     resultadosDiv.innerHTML = `
@@ -39,20 +38,19 @@ function analizarCultivo() {
 function mostrarGrafico(requisitos) {
     const container = document.getElementById('graficoContainer');
 
-    // Eliminar el canvas anterior si existe
     const oldCanvas = document.getElementById('graficoCondiciones');
     if (oldCanvas) {
         oldCanvas.remove();
     }
 
-    // Crear un nuevo canvas
     const nuevoCanvas = document.createElement('canvas');
     nuevoCanvas.id = 'graficoCondiciones';
+    nuevoCanvas.width = 500; 
+    nuevoCanvas.height = 300; 
     container.appendChild(nuevoCanvas);
 
     const ctx = nuevoCanvas.getContext('2d');
 
-    // Destruir gráfico anterior si existe
     if (chart) {
         chart.destroy();
     }
@@ -60,7 +58,7 @@ function mostrarGrafico(requisitos) {
     chart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ['Luminosidad', 'Precipitación', 'Humedad', 'Temperatura'],
+            labels: ['Luminosidad (h)', 'Precipitación (mm)', 'Humedad (%)', 'Temperatura (°C)'],
             datasets: [
                 {
                     label: 'Requisitos óptimos',
@@ -70,15 +68,48 @@ function mostrarGrafico(requisitos) {
                         parseFloat(requisitos.humedad.split('-')[0]),
                         parseFloat(requisitos.temperatura.split('-')[0])
                     ],
-                    backgroundColor: 'rgba(76, 175, 80, 0.5)',
+                    backgroundColor: 'rgba(76, 175, 80, 0.8)',
                     borderColor: 'rgba(76, 175, 80, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Condiciones actuales',
+                    data: [9, 650, 62, 21], // Simulación de datos actuales
+                    backgroundColor: 'rgba(255, 99, 132, 0.8)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
                     borderWidth: 1
                 }
             ]
         },
         options: {
             responsive: true,
-            maintainAspectRatio: false
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'top' },
+                tooltip: {
+                    enabled: true,
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            return `${tooltipItem.dataset.label}: ${tooltipItem.raw}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        color: "#000",
+                        font: { size: 14 }
+                    }
+                },
+                x: {
+                    ticks: {
+                        color: "#000",
+                        font: { size: 14 }
+                    }
+                }
+            }
         }
     });
 }
