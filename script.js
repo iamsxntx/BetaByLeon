@@ -13,14 +13,16 @@ const requisitosCultivos = {
     naranjas: { luminosidad: "8-10 horas", precipitacion: "600-800 mm", humedad: "50-60%", temperatura: "25-30°C" },
 };
 
-let chart; 
+let chart; // Variable global para almacenar el gráfico
 
 function analizarCultivo() {
     const cultivo = document.getElementById("cultivo").value;
     const resultadosDiv = document.getElementById("resultados");
 
+    // Obtener requisitos del cultivo seleccionado
     const requisitos = requisitosCultivos[cultivo];
 
+    // Crear contenido amigable para agricultores
     resultadosDiv.innerHTML = `
         <h3>Requisitos para cultivar ${cultivo.charAt(0).toUpperCase() + cultivo.slice(1)}:</h3>
         <ul>
@@ -32,16 +34,31 @@ function analizarCultivo() {
         <p>¡Verifica si las condiciones de tu suelo son adecuadas!</p>
     `;
 
+    // Mostrar el gráfico
     mostrarGrafico(requisitos);
 }
 
 function mostrarGrafico(requisitos) {
-    const ctx = document.getElementById('graficoCondiciones').getContext('2d');
+    const canvas = document.getElementById('graficoCondiciones');
 
+    // Limpiar el canvas eliminando el nodo anterior y creando uno nuevo
+    canvas.parentNode.removeChild(canvas);
+    
+    // Crear un nuevo canvas para evitar acumulación de gráficos
+    const nuevoCanvas = document.createElement('canvas');
+    nuevoCanvas.id = 'graficoCondiciones';
+    nuevoCanvas.width = 400;
+    nuevoCanvas.height = 400;
+    document.getElementById('graficoContainer').appendChild(nuevoCanvas);
+
+    const ctx = nuevoCanvas.getContext('2d');
+
+    // Si ya hay un gráfico, destruirlo antes de crear uno nuevo
     if (chart) {
         chart.destroy();
     }
 
+    // Crear un nuevo gráfico
     chart = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -83,6 +100,7 @@ function mostrarGrafico(requisitos) {
 function monitorearCultivo() {
     const monitoreoResultadosDiv = document.getElementById("monitoreoResultados");
 
+    // Simular condiciones actuales (esto debería ser reemplazado con datos reales)
     const condicionesActuales = {
         luminosidad: "9 horas",
         precipitacion: "650 mm",
